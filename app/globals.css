@@ -136,7 +136,7 @@ h4 {
 
 @media print {
   @page {
-    size: A4;
+    size: A4 portrait;
     margin: 12mm;
   }
 
@@ -146,5 +146,64 @@ h4 {
 
   body {
     background: white !important;
+    margin: 0 !important;
+    padding: 0 !important;
   }
+
+  /* Invoice print shell */
+  .invoice-print-shell {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: none !important;
+  }
+
+  /* Force invoice to stay in A4 bounds */
+  .invoice-sheet {
+    width: 190mm;
+    min-height: 257mm;
+    font-size: 10pt !important;
+    overflow: hidden !important;
+  }
+
+  .invoice-sheet table {
+    min-width: unset !important;
+    width: 100% !important;
+  }
+
+  .invoice-sheet td,
+  .invoice-sheet th {
+    padding: 3pt 4pt !important;
+    font-size: 9pt !important;
+  }
+
+  /* Repeat table header on every page */
+  thead { display: table-header-group; }
+  tfoot { display: table-footer-group; }
+
+  /* Avoid breaks inside footer */
+  .invoice-footer { page-break-inside: avoid; }
+}
+
+
+.table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+/* vertical lines only */
+.table th,
+.table td {
+  border-right: 1px solid #aaa;
+  padding: 8px;
+}
+
+/* remove last column line */
+.table th:last-child,
+.table td:last-child {
+  border-right: none;
+}
+
+/* optional: table outer border */
+.table {
+  border: 1px solid #aaa;
 }

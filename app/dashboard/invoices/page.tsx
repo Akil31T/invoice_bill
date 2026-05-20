@@ -1,6 +1,6 @@
 'use client';
 
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Plus, Search, FileText } from "lucide-react";
 import { ProtectedRoute } from "../../components/ProtectedRoute";
@@ -21,7 +21,7 @@ export default function InvoicesPage() {
 }
 
 function InvoicesList() {
-  const navigate = useNavigate();
+  const router = useRouter();
   const [list, setList] = useState<any[]>([]);
   const [q, setQ] = useState("");
   const [status, setStatus] = useState("all");
@@ -54,7 +54,7 @@ function InvoicesList() {
       <PageHeader
         title="Invoices"
         subtitle="All your tax invoices in one place."
-        action={<Button onClick={() => navigate({ to: "/invoices/new" })} className="bg-primary hover:bg-primary-glow"><Plus className="h-4 w-4" /> New invoice</Button>}
+        action={<Button onClick={() => router.push("/dashboard/invoices/create")} className="bg-primary hover:bg-primary-glow"><Plus className="h-4 w-4" /> New invoice</Button>}
       />
 
       <div className="flex flex-wrap gap-3 mb-6">
@@ -81,7 +81,7 @@ function InvoicesList() {
             <FileText className="h-12 w-12 text-muted-foreground/40 mx-auto mb-4" />
             <h3 className="font-display text-lg font-semibold mb-1">No invoices yet</h3>
             <p className="text-sm text-muted-foreground mb-5">Create your first tax invoice to get started.</p>
-            <Button onClick={() => navigate({ to: "/invoices/new" })}>Create invoice</Button>
+            <Button onClick={() => router.push("/dashboard/invoices/create")}>Create invoice</Button>
           </div>
         ) : (
           <>
@@ -91,7 +91,7 @@ function InvoicesList() {
                 <div
                   key={i.id}
                   className="p-4 hover:bg-muted/30 active:bg-muted/50 cursor-pointer"
-                  onClick={() => navigate({ to: "/invoices/$id", params: { id: i.id } })}
+                  onClick={() => router.push(`/dashboard/invoices/${i.id}`)}
                 >
                   <div className="flex items-start justify-between gap-2 mb-1">
                     <span className="font-semibold text-sm truncate">{i.invoice_number}</span>
@@ -124,7 +124,7 @@ function InvoicesList() {
                 </thead>
                 <tbody className="block overflow-y-auto max-h-[calc(100dvh-310px)]">
                   {filtered.map((i) => (
-                    <tr key={i.id} className="[display:table] w-full [table-layout:fixed] border-t border-border hover:bg-muted/30 cursor-pointer" onClick={() => navigate({ to: "/invoices/$id", params: { id: i.id } })}>
+                    <tr key={i.id} className="[display:table] w-full [table-layout:fixed] border-t border-border hover:bg-muted/30 cursor-pointer" onClick={() => router.push(`/dashboard/invoices/${i.id}`)}>
                       <td className="px-5 py-3.5 font-medium w-[18%] truncate">{i.invoice_number}</td>
                       <td className="px-5 py-3.5 w-[24%] truncate">{i.customer_snapshot?.name || "—"}</td>
                       <td className="px-5 py-3.5 text-muted-foreground w-[14%]">{formatDate(i.invoice_date)}</td>

@@ -1,6 +1,5 @@
 'use client';
 
-import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Plus, Trash2, Pencil, Users } from "lucide-react";
 import { ProtectedRoute } from "../../components/ProtectedRoute";
@@ -68,21 +67,70 @@ function Customers() {
         action={
           <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) { setForm(empty); setEditId(null); } }}>
             <DialogTrigger asChild><Button className="bg-primary hover:bg-primary-glow"><Plus className="h-4 w-4" /> Add customer</Button></DialogTrigger>
-            <DialogContent className="max-w-2xl">
-              <DialogHeader><DialogTitle className="font-display text-2xl">{editId ? "Edit" : "New"} customer</DialogTitle></DialogHeader>
-              <div className="grid md:grid-cols-2 gap-4">
-                <div className="space-y-2 md:col-span-2"><Label>Name *</Label><Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></div>
-                <div className="space-y-2"><Label>GSTIN</Label><Input value={form.gstin} onChange={(e) => setForm({ ...form, gstin: e.target.value })} /></div>
-                <div className="space-y-2"><Label>Phone</Label><Input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} /></div>
-                <div className="space-y-2 md:col-span-2"><Label>Email</Label><Input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} /></div>
-                <div className="space-y-2 md:col-span-2"><Label>Billing address</Label><Textarea rows={2} value={form.billing_address} onChange={(e) => setForm({ ...form, billing_address: e.target.value })} /></div>
-                <div className="space-y-2 md:col-span-2"><Label>Shipping address</Label><Textarea rows={2} value={form.shipping_address} onChange={(e) => setForm({ ...form, shipping_address: e.target.value })} /></div>
-                <div className="space-y-2"><Label>City</Label><Input value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} /></div>
-                <div className="space-y-2"><Label>State</Label><Input value={form.state} onChange={(e) => setForm({ ...form, state: e.target.value })} /></div>
-                <div className="space-y-2"><Label>Pincode</Label><Input value={form.pincode} onChange={(e) => setForm({ ...form, pincode: e.target.value })} /></div>
-                <div className="space-y-2"><Label>State code</Label><Input value={form.state_code} onChange={(e) => setForm({ ...form, state_code: e.target.value })} /></div>
+            <DialogContent className="w-[95vw] max-w-2xl max-h-[90vh] flex flex-col p-0 gap-0">
+              <div className="px-6 pt-6 pb-4 border-b border-border">
+                <DialogHeader>
+                  <DialogTitle className="font-display text-xl md:text-2xl">
+                    {editId ? "Edit" : "New"} customer
+                  </DialogTitle>
+                </DialogHeader>
               </div>
-              <div className="flex justify-end gap-2 mt-2"><Button variant="outline" onClick={() => setOpen(false)} disabled={saving}>Cancel</Button><Button onClick={save} disabled={saving} className="bg-primary hover:bg-primary-glow">{saving ? "Saving…" : "Save"}</Button></div>
+
+              {/* Scrollable form body */}
+              <div className="flex-1 overflow-y-auto px-6 py-4">
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="space-y-2 md:col-span-2">
+                    <Label>Name *</Label>
+                    <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>GSTIN</Label>
+                    <Input value={form.gstin} onChange={(e) => setForm({ ...form, gstin: e.target.value })} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Phone</Label>
+                    <Input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
+                  </div>
+                  <div className="space-y-2 md:col-span-2">
+                    <Label>Email</Label>
+                    <Input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
+                  </div>
+                  <div className="space-y-2 md:col-span-2">
+                    <Label>Billing address</Label>
+                    <Textarea rows={2} value={form.billing_address} onChange={(e) => setForm({ ...form, billing_address: e.target.value })} />
+                  </div>
+                  <div className="space-y-2 md:col-span-2">
+                    <Label>Shipping address</Label>
+                    <Textarea rows={2} value={form.shipping_address} onChange={(e) => setForm({ ...form, shipping_address: e.target.value })} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>City</Label>
+                    <Input value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>State</Label>
+                    <Input value={form.state} onChange={(e) => setForm({ ...form, state: e.target.value })} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Pincode</Label>
+                    <Input value={form.pincode} onChange={(e) => setForm({ ...form, pincode: e.target.value })} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>State code</Label>
+                    <Input value={form.state_code} onChange={(e) => setForm({ ...form, state_code: e.target.value })} />
+                  </div>
+                </div>
+              </div>
+
+              {/* Sticky footer with action buttons — always visible */}
+              <div className="px-6 py-4 border-t border-border flex justify-end gap-2 bg-card">
+                <Button variant="outline" onClick={() => setOpen(false)} disabled={saving}>
+                  Cancel
+                </Button>
+                <Button onClick={save} disabled={saving} className="bg-primary hover:bg-primary-glow">
+                  {saving ? "Saving…" : "Save"}
+                </Button>
+              </div>
             </DialogContent>
           </Dialog>
         }

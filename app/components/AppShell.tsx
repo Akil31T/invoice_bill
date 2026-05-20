@@ -92,7 +92,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <div className="px-3 py-4">
           <Button
             onClick={() => router.push( '/dashboard/invoices/create')}
-            className="w-full bg-sidebar-primary text-sidebar-primary-foreground hover:opacity-90 font-medium"
+            className="w-full bg-[#fad162] text-sidebar-primary-foreground hover:opacity-90 font-medium"
           >
             <Plus className="h-4 w-4" /> New Invoice
           </Button>
@@ -125,8 +125,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               </div>
               <div className="px-3 py-4">
                 <Button
-                  onClick={() => { setMobileOpen(false); router.push( '/invoices/new'); }}
-                  className="w-full bg-sidebar-primary text-sidebar-primary-foreground hover:opacity-90 font-medium"
+                  onClick={() => { setMobileOpen(false); router.push('/dashboard/invoices/create'); }}
+                  className="w-full bg-[#003b2b] text-sidebar-primary-foreground hover:opacity-90 font-medium"
                 >
                   <Plus className="h-4 w-4" /> New Invoice
                 </Button>
@@ -144,8 +144,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
           <Button
             size="sm"
-            onClick={() => router.push( '/invoices/new')}
-            className="bg-sidebar-primary text-sidebar-primary-foreground hover:opacity-90 h-8 px-3 text-xs"
+            onClick={() => router.push('/dashboard/invoices/create')}
+            className="bg-[#003b2b] text-sidebar-primary-foreground hover:opacity-90 h-8 px-3 text-xs"
           >
             <Plus className="h-3.5 w-3.5" /> New
           </Button>

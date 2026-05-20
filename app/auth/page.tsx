@@ -309,7 +309,7 @@ export default function AuthPage() {
               defaultValue="signin"
               className="w-full"
             >
-              <TabsList className="grid grid-cols-2 w-full mb-6">
+              <TabsList className="grid grid-cols-2 bg-[#fad162] w-full mb-6">
                 <TabsTrigger value="signin">
                   Sign in
                 </TabsTrigger>
@@ -388,7 +388,7 @@ export default function AuthPage() {
                   <Button
                     type="submit"
                     disabled={busy}
-                    className="w-full bg-primary hover:bg-primary-glow"
+                    className="w-full bg-[#fad162] hover:bg-[#f9c23c]"
                   >
                     {busy
                       ? "Signing in..."

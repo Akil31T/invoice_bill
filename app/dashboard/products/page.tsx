@@ -1,6 +1,5 @@
 'use client';
 
-import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Plus, Trash2, Pencil, Package } from "lucide-react";
 import { ProtectedRoute } from "../../components/ProtectedRoute";
@@ -69,25 +68,69 @@ function Products() {
         action={
           <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) { setForm(empty); setEditId(null); } }}>
             <DialogTrigger asChild><Button className="bg-primary hover:bg-primary-glow"><Plus className="h-4 w-4" /> Add product</Button></DialogTrigger>
-            <DialogContent className="max-w-2xl">
-              <DialogHeader><DialogTitle className="font-display text-2xl">{editId ? "Edit" : "New"} product</DialogTitle></DialogHeader>
-              <div className="grid md:grid-cols-2 gap-4">
-                <div className="space-y-2 md:col-span-2"><Label>Name *</Label><Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></div>
-                <div className="space-y-2"><Label>SKU</Label><Input value={form.sku} onChange={(e) => setForm({ ...form, sku: e.target.value })} /></div>
-                <div className="space-y-2"><Label>HSN code</Label><Input value={form.hsn_code} onChange={(e) => setForm({ ...form, hsn_code: e.target.value })} /></div>
-                <div className="space-y-2 md:col-span-2"><Label>Description</Label><Textarea rows={2} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} /></div>
-                <div className="space-y-2"><Label>Unit</Label><Input value={form.unit} onChange={(e) => setForm({ ...form, unit: e.target.value })} /></div>
-                <div className="space-y-2"><Label>Stock</Label><Input type="number" value={form.stock} onChange={(e) => setForm({ ...form, stock: e.target.value })} /></div>
-                <div className="space-y-2"><Label>Unit price (₹)</Label><Input type="number" step="0.01" value={form.unit_price} onChange={(e) => setForm({ ...form, unit_price: e.target.value })} /></div>
-                <div className="space-y-2">
-                  <Label>GST rate</Label>
-                  <Select value={String(form.gst_rate)} onValueChange={(v) => setForm({ ...form, gst_rate: v })}>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
-                    <SelectContent>{[0, 5,9, 12, 18, 28].map((r) => <SelectItem key={r} value={String(r)}>{r}%</SelectItem>)}</SelectContent>
-                  </Select>
+            <DialogContent className="w-[95vw] max-w-2xl max-h-[90vh] flex flex-col p-0 gap-0">
+              <div className="px-6 pt-6 pb-4 border-b border-border">
+                <DialogHeader>
+                  <DialogTitle className="font-display text-xl md:text-2xl">
+                    {editId ? "Edit" : "New"} product
+                  </DialogTitle>
+                </DialogHeader>
+              </div>
+
+              {/* Scrollable form body */}
+              <div className="flex-1 overflow-y-auto px-6 py-4">
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="space-y-2 md:col-span-2">
+                    <Label>Name *</Label>
+                    <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>SKU</Label>
+                    <Input value={form.sku} onChange={(e) => setForm({ ...form, sku: e.target.value })} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>HSN code</Label>
+                    <Input value={form.hsn_code} onChange={(e) => setForm({ ...form, hsn_code: e.target.value })} />
+                  </div>
+                  <div className="space-y-2 md:col-span-2">
+                    <Label>Description</Label>
+                    <Textarea rows={2} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Unit</Label>
+                    <Input value={form.unit} onChange={(e) => setForm({ ...form, unit: e.target.value })} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Stock</Label>
+                    <Input type="number" value={form.stock} onChange={(e) => setForm({ ...form, stock: e.target.value })} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Unit price (₹)</Label>
+                    <Input type="number" step="0.01" value={form.unit_price} onChange={(e) => setForm({ ...form, unit_price: e.target.value })} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>GST rate</Label>
+                    <Select value={String(form.gst_rate)} onValueChange={(v) => setForm({ ...form, gst_rate: v })}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        {[0, 5, 9, 12, 18, 28].map((r) => (
+                          <SelectItem key={r} value={String(r)}>{r}%</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
               </div>
-              <div className="flex justify-end gap-2 mt-2"><Button variant="outline" onClick={() => setOpen(false)} disabled={saving}>Cancel</Button><Button onClick={save} disabled={saving} className="bg-primary hover:bg-primary-glow">{saving ? "Saving…" : "Save"}</Button></div>
+
+              {/* Sticky footer — always visible */}
+              <div className="px-6 py-4 border-t border-border flex justify-end gap-2 bg-card">
+                <Button variant="outline" onClick={() => setOpen(false)} disabled={saving}>
+                  Cancel
+                </Button>
+                <Button onClick={save} disabled={saving} className="bg-primary hover:bg-primary-glow">
+                  {saving ? "Saving…" : "Save"}
+                </Button>
+              </div>
             </DialogContent>
           </Dialog>
         }

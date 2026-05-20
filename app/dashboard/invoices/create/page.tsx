@@ -1,6 +1,6 @@
 'use client'
 
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { Plus, Trash2, Save, ArrowLeft } from "lucide-react";
 import { ProtectedRoute } from "../../../components/ProtectedRoute";
@@ -33,7 +33,7 @@ const blankItem = (): Item => ({ name: "", quantity: 1, unit: "pcs", unit_price:
 
 function NewInvoice() {
   const { user } = useAuth();
-  const navigate = useNavigate();
+  const router = useRouter();
   const [customers, setCustomers] = useState<any[]>([]);
   const [products, setProducts] = useState<any[]>([]);
   const [profile, setProfile] = useState<any>(null);
@@ -205,12 +205,12 @@ function NewInvoice() {
     setSaving(false);
     if (itemErr) return toast.error(itemErr.message);
     toast.success("Invoice saved");
-    navigate({ to: "/invoices/$id", params: { id: inv.id } });
+    router.push(`/dashboard/invoices/${inv.id}`);
   };
 
   return (
     <div className="p-6 md:p-10 max-w-[1400px] mx-auto">
-      <button onClick={() => navigate({ to: "/invoices" })} className="text-sm text-muted-foreground hover:text-foreground inline-flex items-center gap-1 mb-4">
+      <button onClick={() => router.push("/dashboard/invoices")} className="text-sm text-muted-foreground hover:text-foreground inline-flex items-center gap-1 mb-4">
         <ArrowLeft className="h-4 w-4" /> Back
       </button>
       <div className="flex flex-wrap items-end justify-between gap-4 mb-8">

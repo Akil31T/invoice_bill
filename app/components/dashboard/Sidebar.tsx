@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { supabase } from "../../integrations/supabase/client";
 import {
   LayoutDashboard,
   FileText,
@@ -46,6 +47,12 @@ const menuItems = [
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const router = useRouter();
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    router.push("/auth");
+  };
 
   return (
     <aside className="w-[280px] bg-[#002b1f] text-white flex flex-col justify-between">
@@ -59,7 +66,10 @@ export default function Sidebar() {
 
         {/* Button */}
         <div className="p-4">
-          <button className="w-full bg-yellow-500 text-black py-3 rounded-xl font-medium hover:bg-yellow-400 transition">
+          <button
+            onClick={() => router.push("/dashboard/invoices/create")}
+            className="w-full bg-[#003b2b] text-sidebar-primary-foreground py-3 rounded-xl font-medium hover:bg-[#004a3a] transition"
+          >
             + New Invoice
           </button>
         </div>
@@ -89,7 +99,7 @@ export default function Sidebar() {
 
       {/* Footer */}
       <div className="p-4 border-t border-white/10">
-        <button className="text-red-300 hover:text-red-200">
+        <button onClick={handleSignOut} className="text-red-300 hover:text-red-200">
           Sign out
         </button>
       </div>
