@@ -85,6 +85,8 @@ const load = async () => {
     }));
 
     setRows(merged);
+    console.log('merged', merged);
+    
     setActivity(log);
   } catch (err: any) {
     console.error(err);

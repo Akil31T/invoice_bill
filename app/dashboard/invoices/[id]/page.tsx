@@ -168,7 +168,7 @@ function InvoiceDetail() {
     <div className="p-3 md:p-6 lg:p-10 max-w-5xl mx-auto">
       {/* Toolbar - hidden in print */}
       <div className="no-print mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <button onClick={() => router.push( "/invoices" )} className="text-sm text-muted-foreground hover:text-foreground inline-flex items-center gap-1 self-start">
+        <button onClick={() => router.push("/dashboard/invoices")} className="text-sm text-muted-foreground hover:text-foreground inline-flex items-center gap-1 self-start">
           <ArrowLeft className="h-4 w-4" /> Back to invoices
         </button>
         <div className="flex flex-wrap gap-2 items-center">
@@ -224,11 +224,11 @@ function InvoiceDetail() {
 
               <p>{profile?.address}</p>
               <p>
-                {[profile?.city, profile?.state, profile?.pincode]
+                {[profile?.city, profile?.phone, profile?.state, profile?.pincode]
                   .filter(Boolean)
                   .join(", ")}
               </p>
-
+              <p><b>Cell :</b> {profile?.phone}</p>
               {profile?.gstin && (
                 <p>
                   <b>GST:</b> {profile.gstin}
@@ -263,13 +263,13 @@ function InvoiceDetail() {
                   <p>{inv.status}</p>
                 </div>
 
-                 <div className="p-2 flex flex-col justify-between">
+                <div className="p-2 flex flex-col justify-between">
                   <b>Vehicle No.</b>
                   <p>{inv.vehicle_no}</p>
                 </div>
               </div>
 
-           
+
             </div>
           </div>
 
@@ -296,7 +296,7 @@ function InvoiceDetail() {
               )}
             </div>
 
-        
+
           </div>
 
           {/* Items */}
@@ -446,7 +446,7 @@ function InvoiceDetail() {
                   <p>Bank: {profile.bank_name}</p>
                   <p>A/C No: {profile.bank_account}</p>
                   <p>IFSC: {profile.bank_ifsc}</p>
-                  {/* <p>PAN No: {profile.pan_no}</p> */}
+                  <p>PAN No: {profile.pan_no}</p>
                 </>
               )}
             </div>

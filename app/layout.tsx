@@ -7,13 +7,13 @@ import { AuthProvider } from "../app/hooks/useAuth";
 import { Toaster } from "../app/components/ui/sonner";
 
 export const metadata: Metadata = {
-  title: "InvoiceFlow Pro — Tax Invoice Portal",
+  title: "InvoiceFlow Tax Invoice Portal",
 
   description:
     "Modern GST tax invoice management portal for businesses.",
 
   openGraph: {
-    title: "InvoiceFlow Pro — Tax Invoice Portal",
+    title: "InvoiceFlow Tax Invoice Portal",
 
     description:
       "Modern GST tax invoice management portal for businesses.",
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
 
-    title: "InvoiceFlow Pro — Tax Invoice Portal",
+    title: "InvoiceFlow Tax Invoice Portal",
 
     description:
       "Modern GST tax invoice management portal for businesses.",

@@ -244,7 +244,7 @@ export default function AuthPage() {
       </div>
 
       {/* RIGHT SIDE */}
-      <div className="bg-foreground flex items-center justify-center p-6 md:p-12">
+      <div className="flex items-center justify-center p-6 md:p-12">
         <div className="w-full max-w-md">
           <div className="lg:hidden flex items-center gap-2.5 mb-8 justify-center">
             <div className="h-9 w-9 rounded-lg flex items-center justify-center bg-primary">
@@ -321,7 +321,7 @@ export default function AuthPage() {
 
               {/* SIGN IN */}
               <TabsContent value="signin">
-                <h2 className="font-display text-background text-3xl font-semibold mb-1">
+                <h2 className="font-display text-foreground text-3xl font-semibold mb-1">
                   Welcome back
                 </h2>
 
@@ -344,7 +344,7 @@ export default function AuthPage() {
                   className="space-y-4"
                 >
                   <div className="space-y-2">
-                    <Label htmlFor="e1" className="text-background">Email</Label>
+                    <Label htmlFor="e1" className="text-foreground">Email</Label>
 
                     <Input
                       id="e1"
@@ -359,7 +359,7 @@ export default function AuthPage() {
 
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
-                      <Label htmlFor="p1" className="text-background">
+                      <Label htmlFor="p1" className="text-foreground">
                         Password
                       </Label>
 
@@ -388,7 +388,7 @@ export default function AuthPage() {
                   <Button
                     type="submit"
                     disabled={busy}
-                    className="w-full bg-[#fad162] hover:bg-[#f9c23c]"
+                    className="w-full bg-primary hover:bg-primary-glow"
                   >
                     {busy
                       ? "Signing in..."
@@ -422,7 +422,7 @@ export default function AuthPage() {
                   className="space-y-4"
                 >
                   <div className="space-y-2">
-                    <Label htmlFor="c2" className="text-background">
+                    <Label htmlFor="c2" className="text-foreground">
                       Company name
                     </Label>
 
@@ -439,7 +439,7 @@ export default function AuthPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="e2" className="text-background">
+                    <Label htmlFor="e2" className="text-foreground">
                       Email
                     </Label>
 
@@ -455,7 +455,7 @@ export default function AuthPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="p2" className="text-background">
+                    <Label htmlFor="p2" className="text-foreground">
                       Password
                     </Label>
 
