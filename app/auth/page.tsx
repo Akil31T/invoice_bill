@@ -10,7 +10,7 @@ import { supabase } from "../integrations/supabase/client";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
-
+import Image from "next/image";
 import {
   Tabs,
   TabsContent,
@@ -201,14 +201,19 @@ export default function AuthPage() {
         style={{ background: "var(--gradient-emerald)" }}
       >
         <div className="flex items-center gap-2.5">
-          <div
+          {/* <div
             className="h-10 w-10 rounded-lg flex items-center justify-center"
             style={{ background: "var(--gradient-gold)" }}
           >
             <Sparkles className="h-4 w-4 text-sidebar" />
-          </div>
-
-          <div>
+          </div> */}
+          <Image
+            src="/assets/logo.png"
+            alt="Logo"
+            className="h-10 w-16 rounded-lg"
+            width={100}
+            height={100}
+          />          <div>
             <div className="font-display text-xl font-semibold">
               InvoiceFlow
             </div>
@@ -370,7 +375,7 @@ export default function AuthPage() {
                           setMode("forgot")
                         }
                       >
-                        Forgot password?
+                        {/* Forgot password? */}
                       </button>
                     </div>
 

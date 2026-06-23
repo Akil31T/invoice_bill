@@ -52,24 +52,43 @@ function NewInvoice() {
   const [terms, setTerms] = useState("Payment due within 15 days. Late payments may incur interest @1.5% per month.");
   const [saving, setSaving] = useState(false);
 
-  useEffect(() => {
-    Promise.all([
+useEffect(() => {
+  const loadData = async () => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) return;
+
+    const [c, p, pr, last] = await Promise.all([
       supabase.from("customers").select("*").order("name"),
       supabase.from("products").select("*").order("name"),
       supabase.from("profiles").select("*").maybeSingle(),
-      supabase.from("invoices").select("invoice_number").order("created_at", { ascending: false }).limit(1),
-    ]).then(([c, p, pr, last]) => {
-      setCustomers(c.data || []);
-      setProducts(p.data || []);
-      setProfile(pr.data);
-      // auto invoice number
-      const lastNum = last.data?.[0]?.invoice_number || "";
-      const m = lastNum.match(/(\d+)$/);
-      const next = m ? String(Number(m[1]) + 1) : "1";
-      setInvoiceNumber(`Invoice-${next}`);
+      supabase
+        .from("invoices")
+        .select("invoice_number")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false })
+        .limit(1),
+    ]);
 
-    });
-  }, []);
+    setCustomers(c.data || []);
+    setProducts(p.data || []);
+    setProfile(pr.data);
+
+    // Generate next invoice number for current user
+    const lastNum = last.data?.[0]?.invoice_number || "";
+    const match = lastNum.match(/(\d+)$/);
+
+    const nextNumber = match
+      ? String(Number(match[1]) + 1).padStart(4, "0")
+      : "0001";
+
+    setInvoiceNumber(`Invoice-${nextNumber}`);
+  };
+
+  loadData();
+}, []);
 
   // auto interstate from customer
   useEffect(() => {

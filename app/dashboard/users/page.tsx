@@ -36,15 +36,15 @@ const load = async () => {
   try {
     setLoading(true);
 
-    const [profilesRes, rolesRes, logRes] = await Promise.all([
+    const [profileRes, logRes] = await Promise.all([
       supabase
         .from("profiles")
-        .select("*")
-        .order("created_at", { ascending: false }),
-
-      supabase
-        .from("user_roles")
-        .select("user_id,role"),
+        .select(`
+          *,
+          user_roles!user_roles_user_id_fkey (
+      role
+    )
+        `),
 
       supabase
         .from("login_activity")
@@ -53,41 +53,17 @@ const load = async () => {
         .limit(100),
     ]);
 
-    console.log("profiles:", profilesRes);
-    console.log("roles:", rolesRes);
-    console.log("activity:", logRes);
-
-    if (profilesRes.error) throw profilesRes.error;
-    if (rolesRes.error) throw rolesRes.error;
+    if (profileRes.error) throw profileRes.error;
     if (logRes.error) throw logRes.error;
 
-    const profiles = profilesRes.data ?? [];
-    const roles = rolesRes.data ?? [];
-    const log = logRes.data ?? [];
-
-    const roleMap = new Map<string, AppRole>();
-
-    roles.forEach((r: any) => {
-      const existing = roleMap.get(r.user_id);
-
-      const priority = (x: AppRole) =>
-        x === "super_admin" ? 3 :
-        x === "admin" ? 2 : 1;
-
-      if (!existing || priority(r.role) > priority(existing)) {
-        roleMap.set(r.user_id, r.role);
-      }
-    });
-
-    const merged = profiles.map((p: any) => ({
-      ...p,
-      role: roleMap.get(p.id) ?? "staff",
-    }));
+    const merged =
+      profileRes.data?.map((profile: any) => ({
+        ...profile,
+        role: profile.user_roles?.[0]?.role || "staff",
+      })) || [];
 
     setRows(merged);
-    console.log('merged', merged);
-    
-    setActivity(log);
+    setActivity(logRes.data || []);
   } catch (err: any) {
     console.error(err);
     toast.error(err.message);

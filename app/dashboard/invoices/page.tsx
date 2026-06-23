@@ -27,12 +27,33 @@ function InvoicesList() {
   const [status, setStatus] = useState("all");
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    supabase.from("invoices").select("*").order("invoice_date", { ascending: false }).then(({ data }) => {
-      setList(data || []);
+useEffect(() => {
+  const fetchInvoices = async () => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
       setLoading(false);
-    });
-  }, []);
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from("invoices")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("invoice_date", { ascending: false });
+
+    if (error) {
+      console.error(error);
+    }
+
+    setList(data || []);
+    setLoading(false);
+  };
+
+  fetchInvoices();
+}, []);
 
   const filtered = list.filter((i) => {
     if (status !== "all" && i.status !== status) return false;
