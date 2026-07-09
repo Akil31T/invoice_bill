@@ -151,7 +151,7 @@ useEffect(() => {
                       <td className="px-5 py-3.5 text-muted-foreground w-[14%]">{formatDate(i.invoice_date)}</td>
                       <td className="px-5 py-3.5 text-muted-foreground w-[14%]">{i.due_date ? formatDate(i.due_date) : "—"}</td>
                       <td className="px-5 py-3.5 text-right font-semibold w-[15%]">{inr(Number(i.total))}</td>
-                      <td className="px-5 py-3.5 text-center w-[15%]"><Badge variant="outline" className={badgeCls(i.status)}>{i.status}</Badge></td>
+                      <td className="px-5 py-3.5 text-center w-[15%] capitalize"><Badge variant="outline" className={badgeCls(i.status)}>{i.status}</Badge></td>
                     </tr>
                   ))}
                 </tbody>

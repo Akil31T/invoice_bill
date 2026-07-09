@@ -5,15 +5,16 @@ import "./globals.css";
 import { AuthProvider } from "../app/hooks/useAuth";
 
 import { Toaster } from "../app/components/ui/sonner";
+import { Poppins } from "next/font/google";
 
 export const metadata: Metadata = {
-  title: "Invoicify",
+  title: "InvoiceBill",
 
   description:
     "Modern GST tax invoice management portal for businesses.",
 
   openGraph: {
-    title: "Invoicify",
+    title: "InvoiceBill",
 
     description:
       "Modern GST tax invoice management portal for businesses.",
@@ -26,7 +27,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
 
-    title: "Invoicify",
+    title: "InvoiceBill",
 
     description:
       "Modern GST tax invoice management portal for businesses.",
@@ -37,13 +38,18 @@ export const metadata: Metadata = {
   },
 };
 
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-poppins",
+});
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className={poppins.variable}>
       <body>
         <AuthProvider>
           {children}

@@ -226,11 +226,11 @@ useEffect(() => {
   }, [paid]);
 
   return (
-    <div className="min-h-screen bg-[#f7f6f2] p-6 lg:p-10">
+    <div className="min-h-screen bg-primary-foreground p-6 lg:p-10">
       {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-5xl font-bold text-[#002b1f]">
+          <h1 className="text-5xl font-bold text-foreground">
             Dashboard
           </h1>
 
@@ -240,7 +240,7 @@ useEffect(() => {
         </div>
 
         <Button
-          className="bg-[#003b2b] hover:bg-[#002b1f] text-white h-12 px-5 rounded-xl"
+          className="bg-foreground hover:bg-text-color text-white h-12 px-5 rounded-xl"
           onClick={() =>
             router.push(
               "/dashboard/invoices/create",
