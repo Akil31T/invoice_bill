@@ -60,7 +60,7 @@ export default function Sidebar() {
       <div>
         {/* Logo */}
         <div className="p-6 border-b border-white/10">
-          <h1 className="text-3xl font-bold">InvoiceFlow</h1>
+          <h1 className="text-3xl font-bold">InvoiceBill</h1>
           <p className="text-sm text-yellow-400">PRO</p>
         </div>
 

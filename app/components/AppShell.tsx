@@ -79,12 +79,15 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <aside className="hidden md:flex md:sticky md:top-0 md:h-screen w-64 shrink-0 flex-col bg-sidebar text-sidebar-foreground border-r border-sidebar-border no-print">
         <div className="px-6 py-6 border-b border-sidebar-border">
           <Link href="/dashboard" className="flex items-center gap-2.5 group">
-            <div className="h-9 w-9 rounded-lg flex items-center justify-center" style={{ background: "var(--gradient-gold)" }}>
-              <Sparkles className="h-4 w-4 text-sidebar" />
-            </div>
+             <img
+                src='/min-logo.png'
+                alt="Budget management illustration"
+                width={104}
+                height={104}
+                className="w-10 max-w-xs sm:max-w-sm lg:max-w-md"
+              />
             <div>
-              <div className="font-display text-lg font-semibold leading-none">InvoiceFlow</div>
-              <div className="text-[10px] tracking-[0.2em] uppercase text-sidebar-primary mt-1">Pro</div>
+              <div className="font-display text-lg font-semibold leading-none">InvoiceBill</div>
             </div>
           </Link>
         </div>
@@ -118,7 +121,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                     <Sparkles className="h-4 w-4 text-sidebar" />
                   </div>
                   <div>
-                    <div className="font-display text-lg font-semibold leading-none">InvoiceFlow</div>
+                    <div className="font-display text-lg font-semibold leading-none">InvoiceBill</div>
                     <div className="text-[10px] tracking-[0.2em] uppercase text-sidebar-primary mt-1">Pro</div>
                   </div>
                 </Link>
@@ -139,7 +142,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <div className="h-7 w-7 rounded-md flex items-center justify-center" style={{ background: "var(--gradient-gold)" }}>
               <Sparkles className="h-3.5 w-3.5 text-sidebar" />
             </div>
-            <span className="font-display text-base font-semibold">InvoiceFlow</span>
+            <span className="font-display text-base font-semibold">InvoiceBill</span>
           </Link>
 
           <Button

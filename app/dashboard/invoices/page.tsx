@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Plus, Search, FileText } from "lucide-react";
+import { Plus, Search, FileText, Pencil, Trash2 } from "lucide-react";
 import { ProtectedRoute } from "../../components/ProtectedRoute";
 import { PageHeader } from "../../components/PageHeader";
 import { Button } from "../../components/ui/button";
@@ -11,11 +11,14 @@ import { Badge } from "../../components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select";
 import { supabase } from "../../integrations/supabase/client";
 import { inr, formatDate } from "../../lib/format";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/app/components/ui/dialog";
+import InvoiceForm from "@/app/components/InvoiceForm";
+import { toast } from "sonner";
 
 export default function InvoicesPage() {
   return (
     // <ProtectedRoute>
-      <InvoicesList />
+    <InvoicesList />
     // </ProtectedRoute>
   );
 }
@@ -26,34 +29,60 @@ function InvoicesList() {
   const [q, setQ] = useState("");
   const [status, setStatus] = useState("all");
   const [loading, setLoading] = useState(true);
+  const [editInvoiceId, setEditInvoiceId] = useState<string | null>(null);
+  const [editOpen, setEditOpen] = useState(false);
+  const [products, setProducts] = useState<any[]>([]);
 
-useEffect(() => {
-  const fetchInvoices = async () => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+  useEffect(() => {
+    const fetchInvoices = async () => {
+      try {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
 
-    if (!user) {
-      setLoading(false);
-      return;
-    }
+        if (!user) {
+          setLoading(false);
+          return;
+        }
 
-    const { data, error } = await supabase
-      .from("invoices")
-      .select("*")
-      .eq("user_id", user.id)
-      .order("invoice_date", { ascending: false });
+        const { data: invoices, error: invoiceError } = await supabase
+          .from("invoices")
+          .select("*")
+          .eq("user_id", user.id)
+          .order("invoice_date", { ascending: false });
 
-    if (error) {
-      console.error(error);
-    }
+        if (invoiceError) {
+          console.error("Invoice error:", invoiceError);
+          setLoading(false);
+          return;
+        }
 
-    setList(data || []);
-    setLoading(false);
-  };
+        setList(invoices || []);
 
-  fetchInvoices();
-}, []);
+        // -------------------------
+        // Get ALL products
+        // -------------------------
+        const { data: allProducts, error: productsError } = await supabase
+          .from("products")
+          .select("*")
+          .eq("user_id", user.id)
+          .order("name");
+
+        if (productsError) {
+          console.error("Products error:", productsError);
+        }
+
+        setProducts(allProducts || []);
+
+        setLoading(false);
+      } catch (error) {
+        console.error(error);
+        setLoading(false);
+      }
+    };
+
+    fetchInvoices();
+  }, []);
 
   const filtered = list.filter((i) => {
     if (status !== "all" && i.status !== status) return false;
@@ -66,10 +95,54 @@ useEffect(() => {
     pending: "bg-warning/15 text-warning border-warning/40",
     partial: "bg-chart-3/15 text-chart-3 border-chart-3/30",
   } as Record<string, string>)[s] || "bg-muted text-muted-foreground border-border";
-  // const del = async (id: string) => {
-  //   if (!confirm("Delete Invoice?")) return;
-  //   await supabase.from("invoices").delete().eq("id", id);
-  // };
+
+
+  const deleteInvoice = async (invoiceId: string) => {
+    if (!invoiceId) return;
+
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this invoice?"
+    );
+
+    if (!confirmed) return;
+
+    try {
+      // Delete invoice items first
+      const { error: itemsError } = await supabase
+        .from("invoice_items")
+        .delete()
+        .eq("invoice_id", invoiceId);
+
+      if (itemsError) {
+        throw itemsError;
+      }
+
+      // Delete invoice
+      const { error: invoiceError } = await supabase
+        .from("invoices")
+        .delete()
+        .eq("id", invoiceId);
+
+      if (invoiceError) {
+        throw invoiceError;
+      }
+
+      toast.success("Invoice deleted successfully");
+
+      // Refresh invoice list
+      // loadInvoices();
+      window.location.reload()
+
+    } catch (error: any) {
+      console.error("Delete invoice error:", error);
+
+      toast.error(
+        error?.message || "Failed to delete invoice"
+      );
+    }
+  };
+  console.log(filtered, 'filtered');
+
   return (
     <div className="p-6 md:p-10 max-w-[1400px] mx-auto">
       <PageHeader
@@ -141,6 +214,8 @@ useEffect(() => {
                     <th className="text-left px-5 py-3 font-medium w-[14%]">Due</th>
                     <th className="text-right px-5 py-3 font-medium w-[15%]">Amount</th>
                     <th className="text-center px-5 py-3 font-medium w-[15%]">Status</th>
+                    <th className="px-5 py-3 font-medium w-[15%]">Actions</th>
+
                   </tr>
                 </thead>
                 <tbody className="block overflow-y-auto max-h-[calc(100dvh-310px)]">
@@ -151,7 +226,26 @@ useEffect(() => {
                       <td className="px-5 py-3.5 text-muted-foreground w-[14%]">{formatDate(i.invoice_date)}</td>
                       <td className="px-5 py-3.5 text-muted-foreground w-[14%]">{i.due_date ? formatDate(i.due_date) : "—"}</td>
                       <td className="px-5 py-3.5 text-right font-semibold w-[15%]">{inr(Number(i.total))}</td>
-                      <td className="px-5 py-3.5 text-center w-[15%]"><Badge variant="outline" className={badgeCls(i.status)}>{i.status}</Badge></td>
+                      <td className="px-5 py-3.5 text-center w-[15%] capitalize"><Badge variant="outline" className={badgeCls(i.status)}>{i.status}</Badge></td>
+                      <td className="px-5 py-3.5 text-center w-[15%]">
+                        <Button size="icon" variant="ghost" onClick={(e) => {
+                          e.stopPropagation();
+
+                          setEditInvoiceId(i.id);
+                          setEditOpen(true);
+                        }}><Pencil className="h-4 w-4" /></Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={(e) => {
+                            e.stopPropagation();
+
+                            deleteInvoice(i.id);
+                          }}
+                        >
+                          <Trash2 className="h-4 w-4 text-destructive" />
+                        </Button>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -160,6 +254,27 @@ useEffect(() => {
           </>
         )}
       </div>
+      <Dialog open={editOpen} onOpenChange={setEditOpen}>
+        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Edit Invoice</DialogTitle>
+          </DialogHeader>
+
+          {editInvoiceId && (
+            <InvoiceForm
+              invoiceId={editInvoiceId}
+              customers={filtered.map((i) => i.customer_snapshot).filter(Boolean)}
+              products={products}
+              save={'Edit'}
+              onSuccess={() => {
+                setEditOpen(false);
+                setEditInvoiceId(null);
+                // loadInvoices();
+              }}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
