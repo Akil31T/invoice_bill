@@ -6,6 +6,11 @@
   --background: #f8faf8;
   --foreground: #1b4332;
 
+  --foreground-light: #9eeab2;
+  
+  --text-color: #002b1f;
+  --button: #003b2b;
+
   --card: #ffffff;
   --card-foreground: #1b4332;
 
@@ -28,7 +33,7 @@
   --input: #dfe7e1;
   --ring: #2d6a4f;
 
-  --success: #16a34a;
+  --success: #9eeab2;
   --warning: #f59e0b;
   --destructive: #dc2626;
 
@@ -38,10 +43,12 @@
   --sidebar-accent: #2d6a4f;
   --sidebar-border: #2d6a4f;
 
-  --gradient-emerald: linear-gradient(
+  --gradient-emerald:
+  
+  linear-gradient(
     135deg,
-    #1b4332 0%,
-    #2d6a4f 100%
+    #0F172A 0%,
+    #0F172A 100%
   );
 
   --gradient-gold: linear-gradient(
@@ -52,7 +59,7 @@
 }
 
 .dark {
-  --background: #111827;
+  --background: #32383f;
   --foreground: #f9fafb;
 
   --card: #1f2937;

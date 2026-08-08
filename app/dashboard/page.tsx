@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import {
   FileText,
@@ -87,6 +87,9 @@ function statusBadge(status: string) {
 
     overdue:
       "bg-red-100 text-red-700 border-red-200",
+
+    partial:
+      "bg-blue-100 text-blue-700 border-blue-200",
   };
 
   return (
@@ -104,26 +107,41 @@ export default function DashboardPage() {
     Invoice[]
   >([]);
 
-  useEffect(() => {
-    const fetchInvoices = async () => {
-      const { data, error } = await supabase
-        .from("invoices")
-        .select("*")
-        .order("invoice_date", {
-          ascending: false,
-        });
+useEffect(() => {
+  const fetchInvoices = async () => {
+    setLoading(true);
 
-      console.log(data, error);
+    // Get logged-in user
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
 
-      if (!error && data) {
-        setInvoices(data as Invoice[]);
-      }
-
+    if (userError || !user) {
+      console.error(userError);
       setLoading(false);
-    };
+      return;
+    }
 
-    fetchInvoices();
-  }, []);
+    const { data, error } = await supabase
+      .from("invoices")
+      .select("*")
+      .eq("user_id", user.id) // Filter invoices by logged-in user
+      .order("invoice_date", {
+        ascending: false,
+      });
+
+    if (error) {
+      console.error(error);
+    } else {
+      setInvoices(data as Invoice[]);
+    }
+
+    setLoading(false);
+  };
+
+  fetchInvoices();
+}, []);
 
   const today = new Date();
 
@@ -151,27 +169,68 @@ export default function DashboardPage() {
     0,
   );
 
-  const months: {
-    label: string;
-    revenue: number;
-  }[] = [];
+  // FIXED CHART DATA
+  const months = useMemo(() => {
+    const monthNames = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
 
-  const formatCurrency = (
-    amount: number,
-  ) => {
-    return new Intl.NumberFormat("en-IN", {
-      style: "currency",
-      currency: "INR",
-      maximumFractionDigits: 2,
-    }).format(amount);
-  };
+    const result: {
+      label: string;
+      revenue: number;
+    }[] = [];
+
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date();
+
+      d.setMonth(d.getMonth() - i);
+
+      const month = d.getMonth();
+      const year = d.getFullYear();
+
+      const monthRevenue = paid
+        .filter((invoice) => {
+          const invoiceDate = new Date(
+            invoice.invoice_date,
+          );
+
+          return (
+            invoiceDate.getMonth() === month &&
+            invoiceDate.getFullYear() === year
+          );
+        })
+        .reduce(
+          (sum, invoice) =>
+            sum + Number(invoice.total),
+          0,
+        );
+
+      result.push({
+        label: monthNames[month],
+        revenue: monthRevenue,
+      });
+    }
+
+    return result;
+  }, [paid]);
 
   return (
-    <div className="min-h-screen bg-[#f7f6f2] p-6 lg:p-10">
+    <div className="min-h-screen bg-primary-foreground p-6 lg:p-10">
       {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-5xl font-bold text-[#002b1f]">
+          <h1 className="text-5xl font-bold text-foreground">
             Dashboard
           </h1>
 
@@ -181,7 +240,7 @@ export default function DashboardPage() {
         </div>
 
         <Button
-          className="bg-[#003b2b] hover:bg-[#002b1f] text-white h-12 px-5 rounded-xl"
+          className="bg-foreground hover:bg-text-color text-white h-12 px-5 rounded-xl"
           onClick={() =>
             router.push(
               "/dashboard/invoices/create",
@@ -225,6 +284,7 @@ export default function DashboardPage() {
 
       {/* Main Grid */}
       <div className="grid gap-6 lg:grid-cols-3">
+        {/* Revenue Chart */}
         <div className="bg-white lg:col-span-2 border rounded-xl p-6">
           <div className="flex items-end justify-between mb-6">
             <div>
@@ -249,76 +309,31 @@ export default function DashboardPage() {
           </div>
 
           <div className="h-[300px] w-full">
-            <ResponsiveContainer
-              width="100%"
-              height="100%"
-            >
-              <AreaChart
-                data={months}
-                margin={{
-                  top: 10,
-                  right: 10,
-                  left: 0,
-                  bottom: 0,
-                }}
-              >
+            <ResponsiveContainer>
+              <AreaChart data={months} margin={{ top: 5, right: 10, left: 0, bottom: 0 }}>
                 <defs>
-                  <linearGradient
-                    id="rev"
-                    x1="0"
-                    y1="0"
-                    x2="0"
-                    y2="1"
-                  >
-                    <stop
-                      offset="0%"
-                      stopColor="#6366f1"
-                      stopOpacity={0.4}
-                    />
-
-                    <stop
-                      offset="100%"
-                      stopColor="#6366f1"
-                      stopOpacity={0}
-                    />
+                  <linearGradient id="rev" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="oklch(0.42 0.10 165)" stopOpacity={0.4} />
+                    <stop offset="100%" stopColor="oklch(0.42 0.10 165)" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-
-                <CartesianGrid
-                  strokeDasharray="3 3"
-                  vertical={false}
-                />
-
-                <XAxis
-                  dataKey="label"
-                  axisLine={false}
-                  tickLine={false}
-                />
-
-                <YAxis
-                  axisLine={false}
-                  tickLine={false}
-                />
-
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
+                <XAxis dataKey="label" tick={{ fontSize: 12, fill: "var(--muted-foreground)" }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontSize: 12, fill: "var(--muted-foreground)" }} axisLine={false} tickLine={false} tickFormatter={(v) => v >= 1000 ? `${(v / 1000).toFixed(0)}k` : v} />
                 <Tooltip
+                  contentStyle={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: 8, fontSize: 13 }}
                   formatter={(value) => [
-                    inr(Number(value)),
+                    inr(Number(value || 0)),
                     "Revenue",
-                  ]}
-                />
-
-                <Area
-                  type="monotone"
-                  dataKey="revenue"
-                  stroke="#6366f1"
-                  strokeWidth={3}
-                  fill="url(#rev)"
-                />
+                  ]} />
+                <Area type="monotone" dataKey="revenue" stroke="oklch(0.30 0.08 165)" strokeWidth={2.5} fill="url(#rev)" />
               </AreaChart>
             </ResponsiveContainer>
           </div>
         </div>
-        <div className="bg-[#ffff] bg-card border rounded-xl p-6">
+
+        {/* Recent Invoices */}
+        <div className="bg-white border rounded-xl p-6">
           <div className="flex items-center justify-between mb-5">
             <h3 className="text-xl text-black font-semibold">
               Recent
@@ -349,7 +364,7 @@ export default function DashboardPage() {
               <Button
                 onClick={() =>
                   router.push(
-                    "/dashboard/invoices/new",
+                    "/dashboard/invoices/create",
                   )
                 }
               >
